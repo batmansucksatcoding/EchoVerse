@@ -194,7 +194,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👤 Author
 
-**Your Name**
+Krish Jha (aka batmansucksatcoding) 
 - GitHub: [@batmansucksatcoding](https://github.com/batmansucksatcoding)
 - Email: krishjha9702@gmail.com
 
