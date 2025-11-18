@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}Generating AI Insight...{% endblock %}
+
+{% block content %}
+<div class="flex flex-col items-center justify-center text-center min-h-[70vh]">
+    <div class="relative">
+        <div class="absolute w-40 h-40 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 blur-xl opacity-70 animate-pulse-slow inset-0"></div>
+        <div class="relative z-10 w-32 h-32 rounded-full bg-gradient-to-br from-indigo-400 to-purple-700 flex items-center justify-center animate-spin-slow">
+            <span class="text-4xl">🤖</span>
+        </div>
+    </div>
+
+    <h1 class="text-3xl font-bold mt-8 mb-4 glow-text">Generating your AI Insight...</h1>
+    <p class="text-gray-300 max-w-lg mb-8">
+        Claude is reading your journal entries and crafting a personalized reflection.  
+        Please hold on while the insight is generated.
+    </p>
+
+    <div id="progress-status" class="text-purple-400 text-lg mb-8">Processing...</div>
+
+    <div class="flex items-center space-x-2 text-purple-400">
+        <span class="animate-bounce">💬</span>
+        <span class="animate-bounce delay-100">💭</span>
+        <span class="animate-bounce delay-200">✨</span>
+    </div>
+</div>
+
+<script>
+    const taskId = "{{ task_id }}";
+
+    async function checkTaskStatus() {
+        const response = await fetch(`/insights/status/${taskId}/`);
+        const data = await response.json();
+
+        if (data.status === 'SUCCESS') {
+            window.location.href = `/insights/${data.result.id}/`;
+        } else if (data.status === 'FAILURE') {
+            document.getElementById('progress-status').textContent = '❌ Something went wrong.';
+        } else {
+            setTimeout(checkTaskStatus, 2000);
+        }
+    }
+
+    setTimeout(checkTaskStatus, 3000);
+</script>
+
+<style>
+@keyframes spin-slow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+.animate-spin-slow { animation: spin-slow 12s linear infinite; }
+
+@keyframes pulse-slow {
+    0%, 100% { opacity: 0.4; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.2); }
+}
+.animate-pulse-slow { animation: pulse-slow 4s ease-in-out infinite; }
+</style>
+{% endblock %}

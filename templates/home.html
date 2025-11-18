@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}EchoVerse - Reflect. Feel. Grow.{% endblock %}
+
+{% block content %}
+<div class="flex flex-col items-center justify-center text-center min-h-[70vh]">
+    <h1 class="text-5xl font-bold mb-6 glow-text">EchoVerse</h1>
+    <p class="text-lg text-gray-300 max-w-2xl mb-8">
+        Your personal AI-powered emotional journal. Write freely, understand deeply, and visualize your emotional growth. 🌙
+    </p>
+    <div class="space-x-4">
+        <a href="{% url 'signup' %}" class="btn-primary px-8 py-3 rounded-lg text-lg">Get Started</a>
+        <a href="{% url 'login' %}" class="px-8 py-3 rounded-lg border border-purple-500 hover:bg-purple-600 hover:bg-opacity-20 transition text-lg">
+            Login
+        </a>
+    </div>
+</div>
+{% endblock %}

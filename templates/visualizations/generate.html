@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="glass-card p-8">
+        <h1 class="text-4xl font-bold glow-text mb-6">✨ Generate Visualization</h1>
+        
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            
+            <div>
+                <label class="block text-xl font-semibold mb-3">Visualization Type</label>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {% for value, label in viz_types %}
+                    <label class="glass-card p-6 cursor-pointer hover:bg-purple-500 hover:bg-opacity-20 transition">
+                        <input type="radio" name="type" value="{{ value }}" {% if forloop.first %}checked{% endif %} class="mr-3">
+                        <span class="text-lg font-semibold">{{ label }}</span>
+                        <p class="text-gray-400 mt-2 ml-7">
+                            {% if value == 'mood_blob' %}Artistic emotional blob visualization
+                            {% elif value == 'emotion_timeline' %}Track emotions over time
+                            {% endif %}
+                        </p>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div>
+                <label class="block text-xl font-semibold mb-3">Time Period</label>
+                <select name="days" class="w-full px-6 py-4 text-lg bg-white bg-opacity-10 border border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 text-white">
+                    <option value="7">Last 7 days</option>
+                    <option value="14">Last 14 days</option>
+                    <option value="30" selected>Last 30 days</option>
+                    <option value="60">Last 60 days</option>
+                    <option value="90">Last 90 days</option>
+                </select>
+            </div>
+            
+            <div class="flex space-x-4 pt-4">
+                <a href="{% url 'visualizations' %}" class="flex-1 bg-gray-600 hover:bg-gray-700 py-4 rounded-lg text-center text-lg font-semibold transition">
+                    Cancel
+                </a>
+                <button type="submit" class="flex-1 btn-primary py-4 rounded-lg text-lg font-semibold">
+                    🎨 Generate
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

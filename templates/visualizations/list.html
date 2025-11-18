@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-4xl font-bold glow-text mb-2">🎨 Your Mood Visualizations</h1>
+            <p class="text-gray-400 text-lg">Visual journey through your emotions</p>
+        </div>
+        <!-- <a href="{% url 'generate_visualization' %}" class="btn-primary px-8 py-4 rounded-lg text-lg font-semibold">
+            ✨ Create New Visualization
+        </a> -->
+    </div>
+    
+    {% if visualizations %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for viz in visualizations %}
+        <div class="glass-card p-6 hover:scale-105 transition-transform">
+            <div class="mb-4">
+                <img src="{{ viz.image.url }}" alt="{{ viz.get_visualization_type_display }}" class="w-full rounded-lg shadow-lg">
+            </div>
+            <h3 class="text-2xl font-bold mb-2 capitalize">{{ viz.get_visualization_type_display }}</h3>
+            <div class="text-gray-400 space-y-1">
+                <p class="text-lg">📅 {{ viz.start_date|date:"M d" }} - {{ viz.end_date|date:"M d, Y" }}</p>
+                <p class="text-lg">📊 {{ viz.entry_count }} entries analyzed</p>
+                <p class="text-lg">🕐 {{ viz.created_at|date:"M d, Y - h:i A" }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="glass-card p-16 text-center">
+        <div class="text-8xl mb-6">🎨</div>
+        <h2 class="text-3xl font-bold mb-4">No Visualizations Yet</h2>
+        <p class="text-xl text-gray-400 mb-8">Create beautiful visual representations of your emotional journey</p>
+        <a href="{% url 'generate_visualization' %}" class="btn-primary inline-block px-8 py-4 rounded-lg text-lg font-semibold">
+            Create Your First Visualization
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

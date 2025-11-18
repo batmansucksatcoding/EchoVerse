@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% load emotion_filters %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto">
+    <div class="glass-card p-10">
+        <!-- Header -->
+        <div class="flex justify-between items-start mb-8">
+            <div>
+                <h1 class="text-4xl font-bold mb-3">{{ entry.title|default:"Untitled Entry" }}</h1>
+                <p class="text-gray-400 text-xl">{{ entry.created_at|date:"F d, Y - h:i A" }} • {{ entry.word_count }} words</p>
+            </div>
+            <div class="flex space-x-3">
+                <a href="{% url 'entry_update' entry.pk %}" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg text-lg font-semibold transition">✏️ Edit</a>
+                <a href="{% url 'entry_delete' entry.pk %}" class="px-6 py-3 bg-red-600 hover:bg-red-700 rounded-lg text-lg font-semibold transition">🗑️ Delete</a>
+            </div>
+        </div>
+        
+        <!-- Content -->
+        <div class="prose prose-invert prose-lg max-w-none mb-10">
+            <p class="text-gray-200 text-xl leading-relaxed whitespace-pre-wrap">{{ entry.content }}</p>
+        </div>
+        
+        <!-- Emotion Analysis -->
+        {% if emotion_analysis %}
+        <div class="border-t border-gray-600 pt-8">
+            <h2 class="text-3xl font-bold mb-8">🎭 Emotional Analysis</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                <!-- Primary Emotion -->
+                <div class="glass-card p-8 text-center bg-gradient-to-br from-purple-500 to-pink-500 bg-opacity-10">
+                    <div class="text-8xl mb-4">
+                        {% if emotion_analysis.primary_emotion == 'joy' %}😊
+                        {% elif emotion_analysis.primary_emotion == 'sadness' %}😢
+                        {% elif emotion_analysis.primary_emotion == 'anger' %}😠
+                        {% elif emotion_analysis.primary_emotion == 'love' %}❤️
+                        {% elif emotion_analysis.primary_emotion == 'fear' %}😨
+                        {% elif emotion_analysis.primary_emotion == 'anxiety' %}😰
+                        {% elif emotion_analysis.primary_emotion == 'excitement' %}🤩
+                        {% elif emotion_analysis.primary_emotion == 'surprise' %}😲
+                        {% else %}😐
+                        {% endif %}
+                    </div>
+                    <p class="text-3xl font-bold capitalize mb-3" style="color: {{ emotion_analysis.get_color_code }}">
+                        {{ emotion_analysis.primary_emotion }}
+                    </p>
+                    <p class="text-gray-300 text-xl">Primary Emotion</p>
+                    <p class="text-2xl font-bold mt-2">{{ emotion_analysis.primary_emotion_score|to_percentage }}% confidence</p>
+                </div>
+                
+                <!-- Sentiment -->
+                <div class="glass-card p-8">
+                    <h3 class="font-semibold mb-6 text-2xl">Sentiment Analysis</h3>
+                    <div class="mb-6">
+                        <div class="flex justify-between mb-3 text-lg">
+                            <span>😢 Negative</span>
+                            <span>😊 Positive</span>
+                        </div>
+                        <div class="h-8 bg-gray-700 rounded-full overflow-hidden relative">
+                            <!-- Background gradient -->
+                            <div class="absolute inset-0 bg-gradient-to-r from-red-500 via-gray-400 to-green-500 opacity-30"></div>
+                            <!-- Indicator -->
+                            <div class="absolute h-full w-1 bg-white shadow-lg transition-all" 
+                                 style="left: {{ emotion_analysis.sentiment_polarity|sentiment_to_position }}%"></div>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-gray-400 text-lg mb-2">Overall Sentiment</p>
+                        <p class="text-4xl font-bold 
+                            {% if emotion_analysis.sentiment_polarity > 0.3 %}text-green-400
+                            {% elif emotion_analysis.sentiment_polarity < -0.3 %}text-red-400
+                            {% else %}text-gray-400{% endif %}">
+                            {{ emotion_analysis.sentiment_polarity|floatformat:2 }}
+                        </p>
+                        <p class="text-gray-400 text-sm mt-2">(-1 negative to +1 positive)</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Emotion Breakdown -->
+            <h3 class="text-2xl font-bold mb-6">Emotion Breakdown</h3>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                {% for emotion, score in emotion_analysis.get_emotion_dict.items %}
+                <div class="glass-card p-5 text-center hover:scale-105 transition-transform">
+                    <div class="text-4xl mb-3">
+                        {% if emotion == 'joy' %}😊
+                        {% elif emotion == 'sadness' %}😢
+                        {% elif emotion == 'anger' %}😠
+                        {% elif emotion == 'fear' %}😨
+                        {% elif emotion == 'surprise' %}😲
+                        {% elif emotion == 'disgust' %}🤢
+                        {% elif emotion == 'neutral' %}😐
+                        {% elif emotion == 'love' %}❤️
+                        {% elif emotion == 'anxiety' %}😰
+                        {% elif emotion == 'excitement' %}🤩
+                        {% endif %}
+                    </div>
+                    <p class="text-lg capitalize mb-2 font-semibold">{{ emotion }}</p>
+                    <div class="relative pt-1">
+                        <div class="overflow-hidden h-3 text-xs flex rounded-full bg-gray-700">
+                            <div style="width: {{ score|to_percentage }}%" 
+                                 class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center transition-all bg-gradient-to-r from-purple-500 to-pink-500"></div>
+                        </div>
+                    </div>
+                    <p class="text-2xl font-bold mt-2">{{ score|to_percentage }}%</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% else %}
+        <div class="border-t border-gray-600 pt-8 text-center">
+            <p class="text-xl text-gray-400">⏳ Analyzing emotions... Refresh the page if this takes too long.</p>
+        </div>
+        {% endif %}
+        
+        <div class="mt-10">
+            <a href="{% url 'entry_list' %}" class="text-purple-400 hover:text-purple-300 text-xl">← Back to all entries</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="glass-card p-8">
+        <h1 class="text-4xl font-bold glow-text mb-6">🤖 Generate AI Insight</h1>
+        
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            
+            <div>
+                <label class="block text-xl font-semibold mb-3">Insight Type</label>
+                <div class="space-y-4">
+                    {% for value, label in insight_types %}
+                    <label class="glass-card p-6 cursor-pointer hover:bg-purple-500 hover:bg-opacity-20 transition block">
+                        <input type="radio" name="type" value="{{ value }}" {% if forloop.first %}checked{% endif %} class="mr-3">
+                        <span class="text-xl font-semibold">{{ label }}</span>
+                        <p class="text-gray-400 mt-2 ml-7 text-lg">
+                            {% if value == 'weekly_summary' %}Reflective summary of your week's emotional journey
+                            {% elif value == 'future_letter' %}A heartfelt letter to your future self
+                            {% elif value == 'pattern_analysis' %}Deep dive into your emotional patterns
+                            {% elif value == 'recommendation' %}Personalized wellness recommendations
+                            {% endif %}
+                        </p>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="bg-blue-500 bg-opacity-10 border border-blue-500 rounded-lg p-6">
+                <p class="text-lg">💡 <strong>Tip:</strong> AI insights work best when you have at least 5-7 journal entries. The more you write, the better the insights!</p>
+            </div>
+            
+            <div class="flex space-x-4 pt-4">
+                <a href="{% url 'insights' %}" class="flex-1 bg-gray-600 hover:bg-gray-700 py-4 rounded-lg text-center text-lg font-semibold transition">
+                    Cancel
+                </a>
+                <button type="submit" class="flex-1 btn-primary py-4 rounded-lg text-lg font-semibold">
+                    ✨ Generate Insight
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

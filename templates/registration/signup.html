@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-md mx-auto mt-20">
+    <div class="glass-card p-8">
+        <h2 class="text-3xl font-bold text-center mb-6 glow-text">Join EchoVerse</h2>
+        
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+            
+            {% for field in form %}
+            <div>
+                <label class="block text-sm mb-2">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                <p class="text-red-400 text-sm mt-1">{{ field.errors.0 }}</p>
+                {% endif %}
+                {% if field.help_text %}
+                <p class="text-gray-400 text-xs mt-1">{{ field.help_text }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+            
+            <button type="submit" class="w-full btn-primary py-3 rounded-lg font-semibold">
+                Create Account
+            </button>
+        </form>
+        
+        <p class="text-center mt-4 text-gray-400">
+            Already have an account? <a href="{% url 'login' %}" class="text-purple-400 hover:text-purple-300">Login</a>
+        </p>
+    </div>
+</div>
+
+<style>
+    form input, form textarea, form select {
+        width: 100%;
+        padding: 0.5rem 1rem;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid #4a5568;
+        border-radius: 0.5rem;
+        color: white;
+    }
+    form input:focus {
+        outline: none;
+        border-color: #9f7aea;
+        box-shadow: 0 0 0 2px rgba(159, 122, 234, 0.3);
+    }
+</style>
+{% endblock %}

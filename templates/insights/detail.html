@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="glass-card p-10">
+        <div class="mb-8">
+            <div class="flex items-center space-x-4 mb-4">
+                <span class="text-6xl">
+                    {% if insight.insight_type == 'weekly_summary' %}📊
+                    {% elif insight.insight_type == 'future_letter' %}💌
+                    {% elif insight.insight_type == 'pattern_analysis' %}🔍
+                    {% else %}💡
+                    {% endif %}
+                </span>
+                <h1 class="text-4xl font-bold glow-text">{{ insight.title }}</h1>
+            </div>
+            <p class="text-gray-400 text-xl">{{ insight.generated_at|date:"F d, Y - h:i A" }}</p>
+            {% if insight.period_start %}
+            <p class="text-gray-400 text-lg mt-2">Based on entries from {{ insight.period_start|date:"M d" }} to {{ insight.period_end|date:"M d, Y" }}</p>
+            {% endif %}
+        </div>
+        
+        <div class="prose prose-invert prose-lg max-w-none mb-10">
+            <div class="text-gray-200 text-xl leading-relaxed whitespace-pre-wrap">{{ insight.content }}</div>
+        </div>
+        
+        {% if insight.related_entries.all %}
+        <div class="border-t border-gray-600 pt-8">
+            <h2 class="text-2xl font-bold mb-6">📚 Related Entries ({{ insight.related_entries.count }})</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {% for entry in insight.related_entries.all|slice:":6" %}
+                <a href="{% url 'entry_detail' entry.pk %}" class="p-4 bg-white bg-opacity-5 rounded-lg hover:bg-opacity-10 transition">
+                    <p class="font-semibold text-lg mb-2">{{ entry.title|default:"Untitled" }}</p>
+                    <p class="text-gray-400 text-sm">{{ entry.created_at|date:"M d, Y" }}</p>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <div class="mt-10">
+            <a href="{% url 'insights' %}" class="text-purple-400 hover:text-purple-300 text-xl">← Back to all insights</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

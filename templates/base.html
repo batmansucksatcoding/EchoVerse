@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}EchoVerse - Your Emotional Journey{% endblock %}</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* ===== Background Universe ===== */
+        body {
+            background: radial-gradient(ellipse at top left, #1a103d 0%, #0f0a28 40%, #0b0f24 100%);
+            min-height: 100vh;
+            font-family: 'Inter', system-ui, sans-serif;
+            color: #f3f3f3;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            position: relative;
+        }
+
+        /* ===== Enhanced Floating Nebula Blobs ===== */
+        .emotion-blob {
+            filter: blur(60px);
+            opacity: 0.25;
+            animation: float 10s ease-in-out infinite;
+            will-change: transform;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            33% { transform: translate(30px, -30px) scale(1.08) rotate(120deg); }
+            66% { transform: translate(-30px, 20px) scale(0.95) rotate(240deg); }
+        }
+
+        /* ===== Enhanced Glass Morphism ===== */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        }
+
+        /* ===== Enhanced Glow & Gradient ===== */
+        .glow-text {
+            text-shadow: 0 0 30px rgba(168, 85, 247, 0.4), 0 0 60px rgba(236, 72, 153, 0.2);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #8b5cf6 0%, #d946ef 50%, #ec4899 100%);
+            background-size: 200% 200%;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn-primary:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(236, 72, 153, 0.5), 0 0 20px rgba(139, 92, 246, 0.3);
+            background-position: 100% 50%;
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        /* ===== Enhanced Navigation ===== */
+        .nav-link {
+            position: relative;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #a855f7, #ec4899);
+            border-radius: 2px;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-link:hover {
+            color: #d946ef;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-link:hover::before {
+            width: 70%;
+        }
+
+        /* ===== Enhanced Page Load Animation ===== */
+        main {
+            animation: fadeInUp 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(30px);
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== Smooth Scrollbar ===== */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #8b5cf6, #ec4899);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #a855f7, #f472b6);
+        }
+
+        /* ===== Enhanced Dropdown Menu ===== */
+        #profile-menu {
+            animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: top right;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* ===== Mobile Hamburger Menu ===== */
+        .mobile-menu {
+            animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* ===== Flash Messages Enhancement ===== */
+        .flash-message {
+            animation: slideInDown 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== Mobile Optimization ===== */
+        @media (max-width: 768px) {
+            .emotion-blob { 
+                filter: blur(40px);
+                opacity: 0.2;
+            }
+            
+            nav { 
+                padding: 1rem;
+                margin: 0.5rem;
+            }
+
+            .glow-text {
+                text-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+            }
+        }
+    </style>
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body class="relative overflow-x-hidden">
+
+    <!-- Enhanced Animated Background -->
+    <div class="fixed inset-0 overflow-hidden -z-10">
+        <div class="emotion-blob absolute top-20 left-10 w-96 h-96 bg-purple-600 rounded-full"></div>
+        <div class="emotion-blob absolute bottom-20 right-16 w-[32rem] h-[32rem] bg-pink-500 rounded-full" style="animation-delay: 3s;"></div>
+        <div class="emotion-blob absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-blue-500 rounded-full opacity-30" style="animation-delay: 6s;"></div>
+        <div class="emotion-blob absolute top-1/4 right-1/3 w-64 h-64 bg-indigo-500 rounded-full opacity-20" style="animation-delay: 9s;"></div>
+    </div>
+
+    <!-- Enhanced Navbar -->
+    <nav class="glass-card fixed top-0 left-0 right-0 z-50 mx-auto mt-4 max-w-7xl px-4 py-4 sm:px-8 rounded-2xl">
+        <div class="flex justify-between items-center">
+            <a href="{% url 'home' %}" class="text-2xl sm:text-3xl font-extrabold glow-text flex items-center gap-2 hover:scale-105 transition-transform">
+                🌌 <span class="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">EchoVerse</span>
+            </a>
+
+            {% if user.is_authenticated %}
+                <!-- Desktop Menu -->
+                <div class="hidden lg:flex items-center space-x-2 text-base">
+                    <a href="{% url 'dashboard' %}" class="nav-link">Dashboard</a>
+                    <a href="{% url 'entry_list' %}" class="nav-link">Journal</a>
+                    <a href="{% url 'visualizations' %}" class="nav-link">Visuals</a>
+                    <a href="{% url 'insights' %}" class="nav-link">Insights</a>
+
+                    <!-- Profile Dropdown -->
+                    <div class="relative ml-4">
+                        <button id="profile-menu-btn" 
+                                class="flex items-center gap-2 px-4 py-2 rounded-xl glass-card hover:bg-white/10 transition">
+                            <span class="material-symbols-outlined text-lg">account_circle</span>
+                            <span class="font-semibold">{{ user.username }}</span>
+                            <span class="material-symbols-outlined text-base transition-transform" id="dropdown-arrow">expand_more</span>
+                        </button>
+
+                        <div id="profile-menu" 
+                            class="absolute right-0 mt-2 w-56 hidden glass-card rounded-xl overflow-hidden shadow-2xl">
+                            <a href="{% url 'profile_view' %}" class="flex items-center gap-3 px-4 py-3 hover:bg-white/10 transition">
+                                <span class="material-symbols-outlined text-xl">person</span>
+                                <span>View Profile</span>
+                            </a>
+                            <a href="{% url 'profile_edit' %}" class="flex items-center gap-3 px-4 py-3 hover:bg-white/10 transition">
+                                <span class="material-symbols-outlined text-xl">settings</span>
+                                <span>Edit Profile</span>
+                            </a>
+                            <div class="border-t border-white/10"></div>
+                            <a href="{% url 'logout' %}" class="flex items-center gap-3 px-4 py-3 text-red-400 hover:text-red-300 hover:bg-white/10 transition">
+                                <span class="material-symbols-outlined text-xl">logout</span>
+                                <span>Logout</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="lg:hidden p-2 rounded-lg glass-card hover:bg-white/10 transition">
+                    <span class="material-symbols-outlined text-2xl">menu</span>
+                </button>
+
+                <!-- Mobile Menu -->
+                <div id="mobile-menu" class="hidden fixed top-20 right-4 left-4 glass-card rounded-2xl p-6 lg:hidden mobile-menu z-40">
+                    <a href="{% url 'dashboard' %}" class="block py-3 px-4 rounded-lg hover:bg-white/10 transition">Dashboard</a>
+                    <a href="{% url 'entry_list' %}" class="block py-3 px-4 rounded-lg hover:bg-white/10 transition">Journal</a>
+                    <a href="{% url 'visualizations' %}" class="block py-3 px-4 rounded-lg hover:bg-white/10 transition">Visuals</a>
+                    <a href="{% url 'insights' %}" class="block py-3 px-4 rounded-lg hover:bg-white/10 transition">Insights</a>
+                    <div class="border-t border-white/10 my-3"></div>
+                    <a href="{% url 'profile_view' %}" class="block py-3 px-4 rounded-lg hover:bg-white/10 transition">
+                        <span class="material-symbols-outlined text-sm mr-2">person</span>Profile
+                    </a>
+                    <a href="{% url 'profile_edit' %}" class="block py-3 px-4 rounded-lg hover:bg-white/10 transition">
+                        <span class="material-symbols-outlined text-sm mr-2">settings</span>Settings
+                    </a>
+                    <a href="{% url 'logout' %}" class="block py-3 px-4 rounded-lg text-red-400 hover:bg-white/10 transition">
+                        <span class="material-symbols-outlined text-sm mr-2">logout</span>Logout
+                    </a>
+                </div>
+            {% else %}
+                <div class="flex items-center space-x-4">
+                    <a href="{% url 'login' %}" class="nav-link text-base">Login</a>
+                    <a href="{% url 'signup' %}" class="btn-primary px-6 py-2.5 rounded-lg text-base font-semibold relative z-10">Sign Up</a>
+                </div>
+            {% endif %}
+        </div>
+    </nav>
+
+    <!-- Enhanced Flash Messages -->
+    {% if messages %}
+    <div class="mt-28 max-w-4xl mx-auto px-4 space-y-3">
+        {% for message in messages %}
+        <div class="flash-message glass-card p-4 border-l-4
+            {% if message.tags == 'error' %}border-red-500
+            {% elif message.tags == 'success' %}border-green-500
+            {% else %}border-blue-500{% endif %} flex items-center gap-3">
+            <span class="material-symbols-outlined text-2xl">
+                {% if message.tags == 'error' %}error
+                {% elif message.tags == 'success' %}check_circle
+                {% else %}info{% endif %}
+            </span>
+            <span>{{ message }}</span>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main class="pt-32 pb-20 px-4 sm:px-8">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Enhanced Footer -->
+    <footer class="glass-card mx-auto max-w-6xl mb-8 p-8 rounded-2xl text-center">
+        <div class="flex flex-col items-center gap-4">
+            <div class="text-3xl font-bold glow-text">🌌 EchoVerse</div>
+            <p class="text-gray-400 text-sm">Your Digital Twin of Emotions</p>
+            <p class="text-xs text-gray-600 mt-2">&copy; 2025 EchoVerse. Built with ❤️</p>
+        </div>
+    </footer>
+
+    {% block extra_js %}
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // Profile Menu Toggle
+      const btn = document.getElementById("profile-menu-btn");
+      const menu = document.getElementById("profile-menu");
+      const arrow = document.getElementById("dropdown-arrow");
+
+      if (btn && menu) {
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          menu.classList.toggle("hidden");
+          arrow?.classList.toggle("rotate-180");
+        });
+
+        menu.addEventListener("click", (e) => e.stopPropagation());
+
+        document.addEventListener("click", () => {
+          if (!menu.classList.contains("hidden")) {
+            menu.classList.add("hidden");
+            arrow?.classList.remove("rotate-180");
+          }
+        });
+
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape" && !menu.classList.contains("hidden")) {
+            menu.classList.add("hidden");
+            arrow?.classList.remove("rotate-180");
+          }
+        });
+      }
+
+      // Mobile Menu Toggle
+      const mobileBtn = document.getElementById("mobile-menu-btn");
+      const mobileMenu = document.getElementById("mobile-menu");
+
+      if (mobileBtn && mobileMenu) {
+        mobileBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          mobileMenu.classList.toggle("hidden");
+        });
+
+        document.addEventListener("click", (e) => {
+          if (!mobileMenu.classList.contains("hidden") && 
+              !mobileMenu.contains(e.target) && 
+              !mobileBtn.contains(e.target)) {
+            mobileMenu.classList.add("hidden");
+          }
+        });
+      }
+    });
+    </script>
+    {% endblock %}
+</body>
+</html>

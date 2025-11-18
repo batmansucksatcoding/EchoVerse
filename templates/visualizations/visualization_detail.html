@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Visualization - EchoVerse{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="glass-card p-8">
+        <h1 class="text-3xl font-bold mb-4 capitalize">{{ visualization.get_visualization_type_display }}</h1>
+        <img src="{{ visualization.image.url }}" alt="Visualization" class="rounded-lg w-full mb-6 shadow-lg">
+        <p class="text-gray-400 mb-4">{{ visualization.created_at|date:"F d, Y" }}</p>
+        <a href="{% url 'visualizations' %}" class="text-purple-400 hover:text-purple-300">← Back to all visuals</a>
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-4xl font-bold glow-text">My Journal Entries</h1>
+        <a href="{% url 'entry_create' %}" class="btn-primary px-8 py-4 rounded-lg text-xl font-semibold">
+            ✍️ New Entry
+        </a>
+    </div>
+    
+    <div class="space-y-6">
+        {% for entry in entries %}
+        <a href="{% url 'entry_detail' entry.pk %}" class="block glass-card p-8 hover:scale-[1.01] transition-transform">
+            <div class="flex justify-between items-start">
+                <div class="flex-1">
+                    <h2 class="text-2xl font-bold mb-3">{{ entry.title|default:"Untitled Entry" }}</h2>
+                    <p class="text-gray-400 text-lg mb-4">{{ entry.created_at|date:"F d, Y - h:i A" }} • {{ entry.word_count }} words</p>
+                    <p class="text-gray-300 text-lg">{{ entry.preview }}</p>
+                </div>
+                {% if entry.emotion_analysis %}
+                <div class="ml-6 text-center">
+                    <div class="text-6xl mb-3">
+                        {% if entry.emotion_analysis.primary_emotion == 'joy' %}😊
+                        {% elif entry.emotion_analysis.primary_emotion == 'sadness' %}😢
+                        {% elif entry.emotion_analysis.primary_emotion == 'anger' %}😠
+                        {% elif entry.emotion_analysis.primary_emotion == 'love' %}❤️
+                        {% elif entry.emotion_analysis.primary_emotion == 'fear' %}😨
+                        {% elif entry.emotion_analysis.primary_emotion == 'anxiety' %}😰
+                        {% elif entry.emotion_analysis.primary_emotion == 'excitement' %}🤩
+                        {% elif entry.emotion_analysis.primary_emotion == 'surprise' %}😲
+                        {% else %}😐
+                        {% endif %}
+                    </div>
+                    <p class="text-sm text-gray-400 capitalize">{{ entry.emotion_analysis.primary_emotion }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </a>
+        {% empty %}
+        <div class="glass-card p-16 text-center">
+            <p class="text-8xl mb-6">📝</p>
+            <p class="text-3xl font-bold mb-4">No entries yet</p>
+            <a href="{% url 'entry_create' %}" class="btn-primary inline-block px-8 py-4 rounded-lg text-xl font-semibold">
+                Write Your First Entry
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,1642 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Hero Header with Animated Background -->
+    <header class="mb-16 text-center relative py-12">
+        <div class="hero-background">
+            <div class="orb orb-1"></div>
+            <div class="orb orb-2"></div>
+            <div class="orb orb-3"></div>
+        </div>
+        <div class="relative z-10">
+            <h1 class="text-6xl md:text-7xl lg:text-8xl font-black mb-6">
+                <span class="gradient-text-hero">🎨 Your Mood Blob Evolution</span>
+            </h1>
+            <p class="text-gray-300 text-xl md:text-2xl max-w-4xl mx-auto leading-relaxed">
+                Watch your emotional landscape transform into a living, breathing work of art
+            </p>
+        </div>
+    </header>
+    
+    <!-- Current Blob Display - Original Style -->
+    {% if latest_blob %}
+    <section class="glass-card-premium p-8 md:p-12 mb-16 relative overflow-hidden blob-container" aria-labelledby="current-blob-heading">
+        <!-- Animated background particles -->
+        <div class="blob-particles">
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+        </div>
+        
+        <h2 id="current-blob-heading" class="text-3xl md:text-4xl font-bold mb-8 text-center animate-fade-in">
+            ✨ Current State
+        </h2>
+        <div class="flex justify-center mb-8">
+            <div class="relative blob-showcase">
+                <!-- Glowing aura effect -->
+                <div class="blob-aura"></div>
+                
+                <img src="{{ latest_blob.image.url }}" 
+                     alt="Your current mood blob representing {{ total_entries }} emotional entries" 
+                     class="rounded-3xl shadow-2xl w-full max-w-2xl blob-image"
+                     loading="lazy">
+                <div class="absolute top-4 right-4 glass-card px-6 py-3">
+                    <time datetime="{{ latest_blob.created_at|date:'Y-m-d' }}" class="text-lg font-semibold">
+                        {{ latest_blob.created_at|date:"M d, Y" }}
+                    </time>
+                </div>
+            </div>
+        </div>
+        <div class="text-center space-y-4">
+            <p class="text-xl md:text-2xl text-gray-300 animate-slide-up max-w-3xl mx-auto">
+                This blob represents your emotional journey through 
+                <span class="text-purple-400 font-bold counter-animate">{{ total_entries }}</span> 
+                {{ total_entries|pluralize:"entry,entries" }}
+            </p>
+            <p class="text-lg md:text-xl text-gray-400 animate-slide-up-delay max-w-2xl mx-auto">
+                Each new entry adds layers and colors, making your blob unique to you
+            </p>
+        </div>
+    </section>
+    {% endif %}
+    
+    <!-- Enhanced Emotion Timeline (Scrollable) -->
+<section class="glass-card-premium p-8 md:p-10 mb-16 relative overflow-hidden" aria-labelledby="timeline-heading">
+    <div class="text-center mb-8">
+        <h2 id="timeline-heading" class="text-3xl md:text-4xl font-bold mb-4 gradient-text-alt">📈 Emotion Timeline</h2>
+        <p class="text-lg md:text-xl text-gray-400 max-w-3xl mx-auto">
+            A chronological journey through your emotional evolution, captured in vibrant snapshots
+        </p>
+    </div>
+
+    {% if emotion_card_timeline %}
+    <div class="timeline-scroll-container">
+        <div class="timeline-wrapper relative" role="list" aria-label="Emotion timeline entries">
+            <div class="timeline-line-enhanced"></div>
+
+            {% for item in emotion_card_timeline %}
+            <article class="timeline-entry {% if forloop.counter|divisibleby:2 %}timeline-entry-right{% endif %}" 
+                     role="listitem"
+                     style="animation-delay: {{ forloop.counter0|add:0 }}00ms;">
+                
+                <div class="timeline-node-wrapper">
+                    <div class="timeline-node">
+                        <div class="node-ripple"></div>
+                        <div class="node-core">
+                            <span class="node-number">{{ forloop.counter }}</span>
+                        </div>
+                        <div class="node-glow"></div>
+                    </div>
+                </div>
+                
+                <div class="timeline-card">
+                    <div class="card-inner">
+                        <div class="card-image-container group">
+                            <div class="image-gradient-overlay"></div>
+                            <img src="{{ item.card.image.url }}"
+                                 alt="Mood snapshot from {{ item.date|date:'F d, Y' }}"
+                                 class="card-image"
+                                 loading="lazy">
+
+                            <div class="image-hover-info">
+                                <div class="info-badge-time">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <time datetime="{{ item.date|date:'Y-m-d H:i' }}">
+                                        {{ item.date|date:"h:i A" }}
+                                    </time>
+                                </div>
+                            </div>
+
+                            <div class="image-counter-badge">
+                                #{{ forloop.counter }}
+                            </div>
+                        </div>
+
+                        <div class="card-footer">
+                            <div class="flex justify-between items-center">
+                                <div class="date-info">
+                                    <time datetime="{{ item.date|date:'Y-m-d' }}" class="text-base md:text-lg font-semibold text-gray-200 block">
+                                        {{ item.date|date:"F d, Y" }}
+                                    </time>
+                                    <span class="text-xs text-gray-500 mt-1 block">Entry snapshot</span>
+                                </div>
+                                <form action="{% url 'delete_visualization' item.card.id %}" method="POST" 
+                                      onsubmit="return confirm('Delete this blob snapshot? This action cannot be undone.');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="delete-btn group" aria-label="Delete blob snapshot">
+                                        <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                        </svg>
+                                        <span class="text-sm font-medium">Delete</span>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    </div>
+
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-animation">
+            <div class="empty-blob-icon">🎨</div>
+            <div class="empty-sparkles">
+                <span class="sparkle">✨</span>
+                <span class="sparkle">✨</span>
+                <span class="sparkle">✨</span>
+            </div>
+        </div>
+        <h3 class="text-2xl md:text-3xl font-bold mb-4 text-gray-200">Your Timeline Awaits</h3>
+        <p class="text-lg md:text-xl text-gray-400 mb-8 max-w-md mx-auto">
+            Start documenting your emotions to see your unique blob evolution unfold
+        </p>
+        <a href="{% url 'entry_create' %}" class="btn-primary-enhanced">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            <span>Create Your First Entry</span>
+            <svg class="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+            </svg>
+        </a>
+    </div>
+    {% endif %}
+</section>
+
+
+    <!-- Interactive Color Palette Guide -->
+    <section class="glass-card-premium p-8 md:p-10 mb-16" aria-labelledby="color-guide-heading">
+        <div class="text-center mb-10">
+            <h2 id="color-guide-heading" class="text-3xl md:text-4xl font-bold mb-4 gradient-text-alt">🎨 Emotion Palette</h2>
+            <p class="text-base md:text-lg text-gray-400 max-w-3xl mx-auto">
+                Each emotion paints your blob with its signature color, creating a unique emotional fingerprint
+            </p>
+        </div>
+
+        <div class="color-grid">
+            <div class="color-item" data-emotion="joy">
+                <div class="color-circle-wrapper">
+                    <div class="color-circle" style="background: linear-gradient(135deg, #FFD700, #FFA500);">
+                        <div class="color-shine"></div>
+                    </div>
+                </div>
+                <div class="color-info">
+                    <p class="font-bold text-base">Joy</p>
+                    <span class="color-tag">Golden Warmth</span>
+                </div>
+            </div>
+            
+            <div class="color-item" data-emotion="sadness">
+                <div class="color-circle-wrapper">
+                    <div class="color-circle" style="background: linear-gradient(135deg, #4169E1, #1E90FF);">
+                        <div class="color-shine"></div>
+                    </div>
+                </div>
+                <div class="color-info">
+                    <p class="font-bold text-base">Sadness</p>
+                    <span class="color-tag">Deep Azure</span>
+                </div>
+            </div>
+            
+            <div class="color-item" data-emotion="anger">
+                <div class="color-circle-wrapper">
+                    <div class="color-circle" style="background: linear-gradient(135deg, #DC143C, #FF4500);">
+                        <div class="color-shine"></div>
+                    </div>
+                </div>
+                <div class="color-info">
+                    <p class="font-bold text-base">Anger</p>
+                    <span class="color-tag">Fiery Crimson</span>
+                </div>
+            </div>
+            
+            <div class="color-item" data-emotion="fear">
+                <div class="color-circle-wrapper">
+                    <div class="color-circle" style="background: linear-gradient(135deg, #8B008B, #9932CC);">
+                        <div class="color-shine"></div>
+                    </div>
+                </div>
+                <div class="color-info">
+                    <p class="font-bold text-base">Fear</p>
+                    <span class="color-tag">Dark Violet</span>
+                </div>
+            </div>
+            
+            <div class="color-item" data-emotion="love">
+                <div class="color-circle-wrapper">
+                    <div class="color-circle" style="background: linear-gradient(135deg, #FF69B4, #FF1493);">
+                        <div class="color-shine"></div>
+                    </div>
+                </div>
+                <div class="color-info">
+                    <p class="font-bold text-base">Love</p>
+                    <span class="color-tag">Passionate Rose</span>
+                </div>
+            </div>
+            
+            <div class="color-item" data-emotion="anxiety">
+                <div class="color-circle-wrapper">
+                    <div class="color-circle" style="background: linear-gradient(135deg, #9370DB, #8A2BE2);">
+                        <div class="color-shine"></div>
+                    </div>
+                </div>
+                <div class="color-info">
+                    <p class="font-bold text-base">Anxiety</p>
+                    <span class="color-tag">Mystic Purple</span>
+                </div>
+            </div>
+            
+            <div class="color-item" data-emotion="excitement">
+                <div class="color-circle-wrapper">
+                    <div class="color-circle" style="background: linear-gradient(135deg, #FF8C00, #FFD700);">
+                        <div class="color-shine"></div>
+                    </div>
+                </div>
+                <div class="color-info">
+                    <p class="font-bold text-base">Excitement</p>
+                    <span class="color-tag">Electric Amber</span>
+                </div>
+            </div>
+            
+            <div class="color-item" data-emotion="disgust">
+                <div class="color-circle-wrapper">
+                    <div class="color-circle" style="background: linear-gradient(135deg, #556B2F, #6B8E23);">
+                        <div class="color-shine"></div>
+                    </div>
+                </div>
+                <div class="color-info">
+                    <p class="font-bold text-base">Disgust</p>
+                    <span class="color-tag">Murky Olive</span>
+                </div>
+            </div>
+            
+            <div class="color-item" data-emotion="surprise">
+                <div class="color-circle-wrapper">
+                    <div class="color-circle" style="background: linear-gradient(135deg, #FF6347, #FF7F50);">
+                        <div class="color-shine"></div>
+                    </div>
+                </div>
+                <div class="color-info">
+                    <p class="font-bold text-base">Surprise</p>
+                    <span class="color-tag">Bright Coral</span>
+                </div>
+            </div>
+            
+            <div class="color-item" data-emotion="neutral">
+                <div class="color-circle-wrapper">
+                    <div class="color-circle" style="background: linear-gradient(135deg, #808080, #A9A9A9);">
+                        <div class="color-shine"></div>
+                    </div>
+                </div>
+                <div class="color-info">
+                    <p class="font-bold text-base">Neutral</p>
+                    <span class="color-tag">Balanced Gray</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Premium Stats Grid -->
+    <section class="stats-grid mb-16" aria-label="Statistics summary">
+        <div class="stat-card-enhanced" style="--delay: 0s;">
+            <div class="stat-background stat-bg-1"></div>
+            <div class="stat-icon-container">
+                <div class="stat-icon-bg"></div>
+                <span class="stat-icon">📝</span>
+            </div>
+            <div class="stat-content">
+                <p class="stat-value" data-target="{{ total_entries }}">0</p>
+                <p class="stat-label">Total Entries</p>
+                <div class="stat-progress-bar">
+                    <div class="stat-progress-fill" style="width: 100%;"></div>
+                </div>
+                <p class="stat-description">Moments captured in time</p>
+            </div>
+        </div>
+        
+        <div class="stat-card-enhanced" style="--delay: 0.1s;">
+            <div class="stat-background stat-bg-2"></div>
+            <div class="stat-icon-container">
+                <div class="stat-icon-bg"></div>
+                <span class="stat-icon">🎨</span>
+            </div>
+            <div class="stat-content">
+                <p class="stat-value" data-target="{{ unique_colors }}">0</p>
+                <p class="stat-label">Color Layers</p>
+                <div class="stat-progress-bar">
+                    <div class="stat-progress-fill" style="width: {{ unique_colors|floatformat:0 }}%;"></div>
+                </div>
+                <p class="stat-description">Emotional spectrum range</p>
+            </div>
+        </div>
+        
+        <div class="stat-card-enhanced" style="--delay: 0.2s;">
+            <div class="stat-background stat-bg-3"></div>
+            <div class="stat-icon-container">
+                <div class="stat-icon-bg"></div>
+                <span class="stat-icon">⏱️</span>
+            </div>
+            <div class="stat-content">
+                <p class="stat-value" data-target="{{ days_active }}">0</p>
+                <p class="stat-label">Days Active</p>
+                <div class="stat-progress-bar">
+                    <div class="stat-progress-fill" style="width: 75%;"></div>
+                </div>
+                <p class="stat-description">Your journey's timeline</p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Enhanced Feature Cards -->
+<section class="glass-card-premium p-8 md:p-10" aria-labelledby="how-it-works-heading">
+    <div class="text-center mb-12">
+        <h2 id="how-it-works-heading" class="text-3xl md:text-4xl font-bold mb-4 gradient-text-alt">💡 The Science Behind Your Blob</h2>
+        <p class="text-base md:text-lg text-gray-400 max-w-3xl mx-auto">
+            Discover the fascinating process that transforms your emotions into living visual art
+        </p>
+    </div>
+
+    <div class="feature-grid">
+        <!-- 1. Dynamic Color Fusion -->
+        <article class="feature-card">
+            <div class="feature-icon-wrapper">
+                <div class="feature-icon">🎨</div>
+            </div>
+            <h3 class="feature-title">Dynamic Color Fusion</h3>
+            <p class="feature-description">
+                Each emotion injects its unique hue into your blob. Joy radiates golden warmth, 
+                sadness flows in deep blues, while love paints everything in rosy tones — 
+                creating a personalized palette of your inner world.
+            </p>
+            <div class="feature-shine"></div>
+            <div class="feature-border-glow"></div>
+        </article>
+
+        <!-- 2. Organic Evolution -->
+        <article class="feature-card">
+            <div class="feature-icon-wrapper">
+                <div class="feature-icon">🌊</div>
+            </div>
+            <h3 class="feature-title">Organic Evolution</h3>
+            <p class="feature-description">
+                Your blob’s shape morphs with emotional intensity and variation, 
+                growing and shifting like a living organism that mirrors your ever-changing state of mind.
+            </p>
+            <div class="feature-shine"></div>
+            <div class="feature-border-glow"></div>
+        </article>
+
+        <!-- 3. Living Visualization -->
+        <article class="feature-card">
+            <div class="feature-icon-wrapper">
+                <div class="feature-icon">📈</div>
+            </div>
+            <h3 class="feature-title">Living Visualization</h3>
+            <p class="feature-description">
+                This isn’t a static image — it’s a visual timeline that breathes, evolves, 
+                and transforms with each journal entry, capturing your personal story in motion.
+            </p>
+            <div class="feature-shine"></div>
+            <div class="feature-border-glow"></div>
+        </article>
+
+        <!-- 4. Emotional Memory -->
+        <article class="feature-card">
+            <div class="feature-icon-wrapper">
+                <div class="feature-icon">🔮</div>
+            </div>
+            <h3 class="feature-title">Emotional Memory</h3>
+            <p class="feature-description">
+                Your blob remembers every mood. Subtle gradients and textures layer over time, 
+                forming a rich, visual diary of your emotional past.
+            </p>
+            <div class="feature-shine"></div>
+            <div class="feature-border-glow"></div>
+        </article>
+
+        <!-- 5. Neural Harmony (NEW) -->
+        <article class="feature-card">
+            <div class="feature-icon-wrapper">
+                <div class="feature-icon">🧠</div>
+            </div>
+            <h3 class="feature-title">Neural Harmony</h3>
+            <p class="feature-description">
+                Inspired by neuroscience, each emotional color interacts like neural signals — 
+                forming harmonious or contrasting tones that mirror how your mind processes complex feelings.
+            </p>
+            <div class="feature-shine"></div>
+            <div class="feature-border-glow"></div>
+        </article>
+
+        <!-- 6. Reflective Resonance (NEW) -->
+        <article class="feature-card">
+            <div class="feature-icon-wrapper">
+                <div class="feature-icon">💫</div>
+            </div>
+            <h3 class="feature-title">Reflective Resonance</h3>
+            <p class="feature-description">
+                Each blob isn't just data — it's resonance. 
+                It reacts subtly to recurring emotions, reflecting your most dominant energies through rhythm, light, and hue intensity.
+            </p>
+            <div class="feature-shine"></div>
+            <div class="feature-border-glow"></div>
+        </article>
+    </div>
+</section>
+
+</div>
+
+<style>
+:root {
+    --purple-primary: #a855f7;
+    --pink-primary: #ec4899;
+    --blue-primary: #3b82f6;
+    --purple-glow: rgba(168, 85, 247, 0.5);
+    --pink-glow: rgba(236, 72, 153, 0.5);
+    --blue-glow: rgba(59, 130, 246, 0.5);
+}
+
+/* ========== HERO SECTION ========== */
+.hero-background {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.3;
+    animation: float-orb 20s ease-in-out infinite;
+}
+
+.orb-1 {
+    width: 400px;
+    height: 400px;
+    background: var(--purple-glow);
+    top: -200px;
+    left: -100px;
+    animation-delay: 0s;
+}
+
+.orb-2 {
+    width: 350px;
+    height: 350px;
+    background: var(--pink-glow);
+    top: -150px;
+    right: -100px;
+    animation-delay: 5s;
+}
+
+.orb-3 {
+    width: 300px;
+    height: 300px;
+    background: var(--blue-glow);
+    bottom: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    animation-delay: 10s;
+}
+
+@keyframes float-orb {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(30px, -30px) scale(1.1); }
+    66% { transform: translate(-20px, 20px) scale(0.9); }
+}
+
+.gradient-text-hero {
+    background: linear-gradient(135deg, #a855f7 0%, #ec4899 50%, #3b82f6 100%);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradient-shift 10s ease infinite;
+    display: inline-block;
+}
+
+@keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+.gradient-text-alt {
+    background: linear-gradient(135deg, #ec4899, #a855f7, #6366f1);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradient-shift 8s ease infinite reverse;
+}
+
+/* ========== GLASS CARDS ========== */
+.glass-card-premium {
+    background: rgba(17, 24, 39, 0.7);
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 2rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card-premium:hover {
+    border-color: rgba(168, 85, 247, 0.3);
+    box-shadow: 0 25px 50px -12px rgba(168, 85, 247, 0.3);
+    transform: translateY(-2px);
+}
+
+/* ========== ORIGINAL BLOB SECTION ========== */
+.blob-container {
+    position: relative;
+}
+
+.blob-particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: rgba(168, 85, 247, 0.4);
+    border-radius: 50%;
+    animation: float-particle 15s infinite ease-in-out;
+}
+
+.particle:nth-child(1) {
+    left: 10%;
+    animation-delay: 0s;
+    animation-duration: 12s;
+}
+
+.particle:nth-child(2) {
+    left: 30%;
+    animation-delay: 2s;
+    animation-duration: 18s;
+}
+
+.particle:nth-child(3) {
+    left: 50%;
+    animation-delay: 4s;
+    animation-duration: 15s;
+}
+
+.particle:nth-child(4) {
+    left: 70%;
+    animation-delay: 1s;
+    animation-duration: 20s;
+}
+
+.particle:nth-child(5) {
+    left: 90%;
+    animation-delay: 3s;
+    animation-duration: 14s;
+}
+
+@keyframes float-particle {
+    0%, 100% {
+        transform: translateY(100vh) scale(0);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+        transform: translateY(90vh) scale(1);
+    }
+    90% {
+        opacity: 1;
+        transform: translateY(10vh) scale(1);
+    }
+    100% {
+        transform: translateY(0) scale(0);
+        opacity: 0;
+    }
+}
+
+.blob-showcase {
+    position: relative;
+    animation: blob-entrance 1s ease-out;
+}
+
+/* ========== SCROLLABLE TIMELINE ========== */
+.timeline-scroll-container {
+    max-height: 80vh; /* scrollable height */
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 0.5rem;
+    scroll-behavior: smooth;
+}
+
+/* nice scroll styling */
+.timeline-scroll-container::-webkit-scrollbar {
+    width: 10px;
+}
+
+.timeline-scroll-container::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.timeline-scroll-container::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #a855f7, #ec4899);
+    border-radius: 10px;
+}
+
+.timeline-scroll-container::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #ec4899, #6366f1);
+}
+
+.blob-aura {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120%;
+    height: 120%;
+    background: radial-gradient(circle, rgba(168, 85, 247, 0.3) 0%, transparent 70%);
+    animation: pulse-aura 3s ease-in-out infinite;
+    border-radius: 50%;
+    z-index: -1;
+}
+
+.blob-image {
+    animation: float 6s ease-in-out infinite, subtle-rotate 20s ease-in-out infinite;
+    transition: transform 0.3s ease;
+}
+
+.blob-image:hover {
+    transform: scale(1.05);
+}
+
+@keyframes blob-entrance {
+    from {
+        opacity: 0;
+        transform: scale(0.8) translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes float {
+    0%, 100% { 
+        transform: translateY(0px) rotate(0deg); 
+    }
+    50% { 
+        transform: translateY(-20px) rotate(2deg); 
+    }
+}
+
+@keyframes subtle-rotate {
+    0%, 100% { 
+        transform: rotate(-1deg); 
+    }
+    50% { 
+        transform: rotate(1deg); 
+    }
+}
+
+@keyframes pulse-aura {
+    0%, 100% {
+        opacity: 0.3;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+        opacity: 0.6;
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+}
+
+/* Text animations */
+@keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slide-up {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fade-in 0.8s ease-out;
+}
+
+.animate-slide-up {
+    animation: slide-up 0.8s ease-out 0.2s both;
+}
+
+.animate-slide-up-delay {
+    animation: slide-up 0.8s ease-out 0.4s both;
+}
+
+.counter-animate {
+    display: inline-block;
+    animation: counter-pop 0.6s ease-out 0.6s both;
+}
+
+@keyframes counter-pop {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+    70% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* ========== ENHANCED TIMELINE ========== */
+.timeline-wrapper {
+    position: relative;
+    padding: 2rem 0;
+}
+
+.timeline-line-enhanced {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    transform: translateX(-50%);
+    background: linear-gradient(
+        180deg,
+        transparent 0%,
+        rgba(168, 85, 247, 0.8) 10%,
+        rgba(236, 72, 153, 0.8) 50%,
+        rgba(99, 102, 241, 0.8) 90%,
+        transparent 100%
+    );
+    animation: timeline-glow 3s ease-in-out infinite;
+}
+
+@keyframes timeline-glow {
+    0%, 100% {
+        opacity: 0.5;
+        filter: blur(2px);
+    }
+    50% {
+        opacity: 1;
+        filter: blur(0px);
+    }
+}
+
+.timeline-entry {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 2rem;
+    margin: 4rem 0;
+    opacity: 0;
+    animation: timeline-entry-appear 0.8s ease-out forwards;
+}
+
+@keyframes timeline-entry-appear {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.timeline-entry-right .timeline-card {
+    grid-column: 3;
+}
+
+.timeline-entry:not(.timeline-entry-right) .timeline-card {
+    grid-column: 1;
+}
+
+.timeline-node-wrapper {
+    grid-column: 2;
+    position: relative;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+.timeline-node {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.node-core {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #a855f7, #ec4899);
+    border: 3px solid rgba(17, 24, 39, 0.9);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+    animation: node-pulse 2s ease-in-out infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.875rem;
+    color: white;
+}
+
+.node-number {
+    position: relative;
+    z-index: 1;
+}
+
+@keyframes node-pulse {
+    0%, 100% {
+        transform: translate(-50%, -50%) scale(1);
+        box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.7);
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.05);
+        box-shadow: 0 0 0 8px rgba(168, 85, 247, 0);
+    }
+}
+
+.node-ripple {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid rgba(168, 85, 247, 0.4);
+    animation: ripple-expand 2s ease-out infinite;
+}
+
+@keyframes ripple-expand {
+    0% {
+        transform: translate(-50%, -50%) scale(0.8);
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(2);
+        opacity: 0;
+    }
+}
+
+.node-glow {
+    position: absolute;
+    inset: -10px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(168, 85, 247, 0.3), transparent 70%);
+    animation: glow-breath 3s ease-in-out infinite;
+}
+
+@keyframes glow-breath {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.2); }
+}
+
+/* ========== TIMELINE CARDS ========== */
+.timeline-card {
+    position: relative;
+    width: 100%;
+    max-width: 450px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.timeline-entry-right .timeline-card {
+    justify-self: start;
+}
+
+.timeline-entry:not(.timeline-entry-right) .timeline-card {
+    justify-self: end;
+}
+
+.timeline-card:hover {
+    transform: translateY(-12px) scale(1.02);
+}
+
+.card-inner {
+    background: rgba(17, 24, 39, 0.8);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1.5rem;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    transition: all 0.4s ease;
+}
+
+.timeline-card:hover .card-inner {
+    border-color: rgba(168, 85, 247, 0.4);
+    box-shadow: 0 25px 60px rgba(168, 85, 247, 0.25);
+}
+
+.card-image-container {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 1;
+}
+
+.card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.timeline-card:hover .card-image {
+    transform: scale(1.15);
+}
+
+.image-gradient-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to bottom,
+        transparent 0%,
+        rgba(0, 0, 0, 0.1) 50%,
+        rgba(0, 0, 0, 0.4) 100%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+}
+
+.timeline-card:hover .image-gradient-overlay {
+    opacity: 1;
+}
+
+.image-hover-info {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    z-index: 2;
+}
+
+.timeline-card:hover .image-hover-info {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.info-badge-time {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(17, 24, 39, 0.95);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(168, 85, 247, 0.3);
+    border-radius: 0.75rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #a855f7;
+}
+
+.image-counter-badge {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.95), rgba(236, 72, 153, 0.95));
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 0.75rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: white;
+    z-index: 2;
+}
+
+.card-footer {
+    padding: 1.5rem;
+    background: rgba(17, 24, 39, 0.6);
+}
+
+.date-info {
+    flex: 1;
+}
+
+.delete-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #ef4444;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: 0.75rem;
+    transition: all 0.3s ease;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.delete-btn:hover {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.4);
+    transform: scale(1.05);
+}
+
+/* ========== EMPTY STATE ========== */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+}
+
+.empty-state-animation {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 2rem;
+}
+
+.empty-blob-icon {
+    font-size: 6rem;
+    animation: empty-icon-float 3s ease-in-out infinite;
+}
+
+@keyframes empty-icon-float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(5deg); }
+}
+
+.empty-sparkles {
+    position: absolute;
+    inset: 0;
+}
+
+.sparkle {
+    position: absolute;
+    font-size: 2rem;
+    animation: sparkle-twinkle 2s ease-in-out infinite;
+}
+
+.sparkle:nth-child(1) {
+    top: 0;
+    left: -20px;
+    animation-delay: 0s;
+}
+
+.sparkle:nth-child(2) {
+    top: 0;
+    right: -20px;
+    animation-delay: 0.5s;
+}
+
+.sparkle:nth-child(3) {
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    animation-delay: 1s;
+}
+
+@keyframes sparkle-twinkle {
+    0%, 100% { opacity: 0.3; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.2); }
+}
+
+.btn-primary-enhanced {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 2rem;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: white;
+    background: linear-gradient(135deg, #a855f7, #ec4899);
+    border-radius: 1rem;
+    box-shadow: 0 10px 30px rgba(168, 85, 247, 0.3);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary-enhanced::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #ec4899, #a855f7);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.btn-primary-enhanced:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 40px rgba(168, 85, 247, 0.4);
+}
+
+.btn-primary-enhanced:hover::before {
+    opacity: 1;
+}
+
+.btn-primary-enhanced span,
+.btn-primary-enhanced svg {
+    position: relative;
+    z-index: 1;
+}
+
+/* ========== COLOR PALETTE ========== */
+/* 🎨 Emotion Palette — Visually Refined and Aligned */
+.color-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 2rem;
+    justify-content: center;
+    align-items: stretch;
+    text-align: center;
+    margin-top: 2rem;
+}
+
+/* Each color card */
+.color-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.25rem;
+    padding: 2rem 1.5rem;
+    width: 100%;
+    height: 230px;
+    background: rgba(17, 24, 39, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 1.5rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    position: relative;
+}
+
+.color-item:hover {
+    background: rgba(17, 24, 39, 0.85);
+    border-color: rgba(168, 85, 247, 0.3);
+    transform: translateY(-10px) scale(1.03);
+    box-shadow: 0 12px 40px rgba(168, 85, 247, 0.25);
+}
+
+/* Color circle styling */
+.color-circle-wrapper {
+    position: relative;
+    width: 90px;
+    height: 90px;
+}
+
+.color-circle {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.5s ease;
+}
+
+.color-circle::after {
+    content: '';
+    position: absolute;
+    inset: -8px;
+    border-radius: 50%;
+    background: inherit;
+    filter: blur(12px);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.color-item:hover .color-circle {
+    transform: scale(1.15) rotate(180deg);
+}
+
+.color-item:hover .color-circle::after {
+    opacity: 0.5;
+}
+
+/* Light shine reflection */
+.color-shine {
+    position: absolute;
+    top: 12%;
+    left: 15%;
+    width: 35%;
+    height: 35%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.9), transparent);
+    border-radius: 50%;
+    opacity: 0.25;
+    filter: blur(10px);
+}
+
+
+
+/* ========== STATS GRID ========== */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.stat-card-enhanced {
+    position: relative;
+    padding: 2.5rem;
+    background: rgba(17, 24, 39, 0.7);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1.5rem;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: stat-entrance 0.8s ease-out backwards;
+    animation-delay: var(--delay);
+}
+
+.stat-card-enhanced:hover {
+    transform: translateY(-12px) scale(1.02);
+    border-color: rgba(168, 85, 247, 0.4);
+    box-shadow: 0 30px 60px rgba(168, 85, 247, 0.25);
+}
+
+@keyframes stat-entrance {
+    from {
+        opacity: 0;
+        transform: translateY(40px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.stat-background {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.stat-bg-1 {
+    background: radial-gradient(circle at 30% 20%, rgba(168, 85, 247, 0.2), transparent 60%);
+}
+
+.stat-bg-2 {
+    background: radial-gradient(circle at 70% 20%, rgba(236, 72, 153, 0.2), transparent 60%);
+}
+
+.stat-bg-3 {
+    background: radial-gradient(circle at 50% 20%, rgba(99, 102, 241, 0.2), transparent 60%);
+}
+
+.stat-card-enhanced:hover .stat-background {
+    opacity: 1;
+}
+
+.stat-icon-container {
+    position: relative;
+    width: 90px;
+    height: 90px;
+    margin: 0 auto 1.5rem;
+}
+
+.stat-icon-bg {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(236, 72, 153, 0.2));
+    border-radius: 50%;
+    animation: icon-bg-rotate 10s linear infinite;
+}
+
+@keyframes icon-bg-rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.stat-icon {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.75rem;
+    animation: icon-bounce 3s ease-in-out infinite;
+}
+
+@keyframes icon-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+}
+
+.stat-content {
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 3.5rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, #a855f7, #ec4899);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.75rem;
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #e5e7eb;
+    margin-bottom: 1rem;
+}
+
+.stat-progress-bar {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 0.75rem;
+}
+
+.stat-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #a855f7, #ec4899);
+    border-radius: 3px;
+    animation: progress-fill 1.5s ease-out;
+}
+
+@keyframes progress-fill {
+    from { width: 0; }
+}
+
+.stat-description {
+    font-size: 0.875rem;
+    color: #9ca3af;
+}
+
+/* ========== FEATURE GRID ========== */
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.feature-card {
+    position: relative;
+    padding: 2.5rem;
+    background: rgba(17, 24, 39, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1.5rem;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.feature-card:hover {
+    background: rgba(17, 24, 39, 0.8);
+    border-color: rgba(168, 85, 247, 0.4);
+    transform: translateY(-10px);
+    box-shadow: 0 25px 50px rgba(168, 85, 247, 0.2);
+}
+
+.feature-icon-wrapper {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(236, 72, 153, 0.2));
+    border-radius: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    transition: all 0.4s ease;
+}
+
+.feature-card:hover .feature-icon-wrapper {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.feature-icon {
+    font-size: 3rem;
+    animation: feature-icon-float 4s ease-in-out infinite;
+}
+
+@keyframes feature-icon-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.feature-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: #f3f4f6;
+}
+
+.feature-description {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #d1d5db;
+}
+
+.feature-shine {
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        transparent 30%,
+        rgba(255, 255, 255, 0.05) 50%,
+        transparent 70%
+    );
+    transform: rotate(45deg) translateX(-100%);
+    transition: transform 0.6s ease;
+}
+
+.feature-card:hover .feature-shine {
+    transform: rotate(45deg) translateX(100%);
+}
+
+.feature-border-glow {
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(135deg, transparent, rgba(168, 85, 247, 0.5), transparent);
+    border-radius: 1.5rem;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: -1;
+}
+
+.feature-card:hover .feature-border-glow {
+    opacity: 1;
+}
+
+/* ========== RESPONSIVE DESIGN ========== */
+@media (max-width: 1024px) {
+    .timeline-entry {
+        grid-template-columns: auto 1fr;
+        gap: 1.5rem;
+    }
+    
+    .timeline-entry-right .timeline-card,
+    .timeline-entry:not(.timeline-entry-right) .timeline-card {
+        grid-column: 2;
+        justify-self: start;
+    }
+    
+    .timeline-node-wrapper {
+        grid-column: 1;
+    }
+    
+    .timeline-line-enhanced {
+        left: 30px;
+    }
+}
+
+@media (max-width: 768px) {
+    .stats-grid,
+    .feature-grid,
+    .color-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .timeline-card {
+        max-width: 100%;
+    }
+    
+    h1 {
+        font-size: 3rem;
+    }
+    
+    .stat-value {
+        font-size: 2.5rem;
+    }
+}
+
+/* ========== ACCESSIBILITY ========== */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+button:focus-visible,
+a:focus-visible {
+    outline: 2px solid #a855f7;
+    outline-offset: 2px;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Enhanced Counter Animation with Easing
+    const statValues = document.querySelectorAll('.stat-value');
+    
+    const easeOutQuart = (t) => 1 - Math.pow(1 - t, 4);
+    
+    const animateCounter = (element) => {
+        const target = parseInt(element.getAttribute('data-target'));
+        if (isNaN(target) || target === 0) {
+            element.textContent = target;
+            return;
+        }
+        
+        const duration = 2000;
+        const startTime = performance.now();
+        
+        const updateCounter = (currentTime) => {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const easedProgress = easeOutQuart(progress);
+            
+            const current = Math.floor(easedProgress * target);
+            element.textContent = current;
+            
+            if (progress < 1) {
+                requestAnimationFrame(updateCounter);
+            } else {
+                element.textContent = target;
+            }
+        };
+        
+        requestAnimationFrame(updateCounter);
+    };
+    
+    // Intersection Observer for scroll-triggered animations
+    const observerOptions = {
+        threshold: 0.3,
+        rootMargin: '0px 0px -100px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting && !entry.target.classList.contains('counted')) {
+                animateCounter(entry.target);
+                entry.target.classList.add('counted');
+            }
+        });
+    }, observerOptions);
+    
+    statValues.forEach(stat => observer.observe(stat));
+    
+    // Color Item Click Animation
+    const colorItems = document.querySelectorAll('.color-item');
+    colorItems.forEach(item => {
+        item.addEventListener('click', function() {
+            this.style.transform = 'scale(1.1) translateY(-8px)';
+            setTimeout(() => {
+                this.style.transform = '';
+            }, 300);
+        });
+    });
+    
+    // Timeline Entry Stagger Animation
+    const timelineEntries = document.querySelectorAll('.timeline-entry');
+    timelineEntries.forEach((entry, index) => {
+        entry.style.animationDelay = `${index * 0.15}s`;
+    });
+    
+    // Smooth Scroll
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
