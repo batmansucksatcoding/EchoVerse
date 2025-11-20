@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: echoverse
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn echoverse_project.wsgi"
+    pythonVersion: 3.11.9
